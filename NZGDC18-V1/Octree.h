@@ -45,7 +45,7 @@ namespace brandonpelfrey {
 		Octree(Octree&& other)
 			: origin(other.origin), children(other.children) {
 			for (int i = 0; i < 8; ++i)
-				children[i] = nullptr;
+				other.children[i] = nullptr;
 			}
 
 		~Octree() {
@@ -121,24 +121,24 @@ namespace brandonpelfrey {
 			}
 		}
 
-		void getPointsInsideRadiusLeafImpl(const Vec4 & source, double radius_sqr, std::vector<Vec4> & results) const
+		void getPointsInsideRadiusLeafImpl(const Vec4 & source, float radius_sqr, std::vector<Vec4> & results) const
 		{
 			const Vec4 diff = source - origin;
-			const double dist = diff.normSquared();
+			const float dist = diff.normSquared();
 			if (dist <= radius_sqr)
 			{
 				results.push_back(origin);
 			}
 		}
 
-		void getPointsInsideRaduisInnerImpl(const Vec4 & source, double radius_sqr, std::vector<Vec4> & results) const
+		void getPointsInsideRaduisInnerImpl(const Vec4 & source, float radius_sqr, std::vector<Vec4> & results) const
 		{
 			// We're at an interior node of the tree. We will check to see if
 			// the query radius lies outside the octants of this node.
 			for (int i = 0; i<8; ++i) {
 				// Is the centre of mass within the radius of influence
 				const Vec4 diff = source - origin;
-				const double dist = diff.normSquared();
+				const float dist = diff.normSquared();
 				if (dist > radius_sqr)
 				{
 					// Centre of mass is outside influence. Use approximation for cluster. 
@@ -152,7 +152,7 @@ namespace brandonpelfrey {
 			}
 		}
 
-		void getPointsInsideRadiusSqr(const Vec4& source, double radius_sqr, std::vector<Vec4>& results) const
+		void getPointsInsideRadiusSqr(const Vec4& source, float radius_sqr, std::vector<Vec4>& results) const
 		{
 			// If we're at a leaf node, just see if the current data point is inside
 			// the query bounding box
@@ -169,10 +169,10 @@ namespace brandonpelfrey {
 		protected:
 			static Vec4 CentreofMass(Vec4 a, Vec4 b)
 			{
-				double x_acc = 0.0;
-				double y_acc = 0.0;
-				double z_acc = 0.0;
-				double w_acc = 0.0;
+				float x_acc = 0.0;
+				float y_acc = 0.0;
+				float z_acc = 0.0;
+				float w_acc = 0.0;
 
 				x_acc += a.x * a.w;
 				y_acc += a.y * a.w;
@@ -195,10 +195,10 @@ namespace brandonpelfrey {
 				// Centre of mass can be calculated by the 
 				// sum of mass-position products over the total mass of the system
 				assert(!isLeafNode());
-				double x_acc = 0.0;
-				double y_acc = 0.0;
-				double z_acc = 0.0;
-				double w_acc = 0.0;
+				float x_acc = 0.0;
+				float y_acc = 0.0;
+				float z_acc = 0.0;
+				float w_acc = 0.0;
 
 				for (auto &c : children)
 				{
